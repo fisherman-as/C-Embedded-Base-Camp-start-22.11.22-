@@ -1,0 +1,9 @@
+The group number is:  	group1-mentor-artem
+
+The full name is:		Yabanzhi Aleksey Sergeevich
+
+The E-mail is :  		Aleksey.Yabanzhi@avtor.ua (fisherman-as@ukr.net as well)
+
+The repository link is:  	https://github.com/fisherman-as/C-Embedded-Base-Camp-start-22.11.22-.git
+
+The shared folder link is: 	https://drive.google.com/drive/folders/1KANUB3yTg5UlKE-ZHvXg77VEXRSzX_DO?usp=share_link

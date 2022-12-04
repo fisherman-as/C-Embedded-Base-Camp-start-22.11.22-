@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1670195038 source:d:\2022probes\c-embedded-base-camp-start-22.11.22-\pure c training 01 prerequisites\main.c
+	<stdio.h>
+	<stdlib.h>
+
