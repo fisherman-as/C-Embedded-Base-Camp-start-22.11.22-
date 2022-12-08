@@ -20,5 +20,6 @@ int main()
     printf("E-mail:             %s\n\n\n", c);
     printf("Repository link: %s\n\n\n", d);
     printf("Shared folder link: %s\n\n\n", e);
+    getchar();
     return 0;
 }
