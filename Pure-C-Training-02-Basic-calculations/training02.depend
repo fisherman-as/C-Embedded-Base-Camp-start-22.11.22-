@@ -1,6 +1,0 @@
-# depslib dependency file v1.0
-1671530168 source:d:\documents\gitas\c-embedded-base-camp-start-22.11.22-\pure-c-training-02-basic-calculations\main.c
-	<stdio.h>
-	<stdlib.h>
-	"math.h"
-
