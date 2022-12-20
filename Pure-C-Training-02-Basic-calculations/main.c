@@ -35,6 +35,7 @@ int main()
         Here we print the result for each of 5-th countings.
         Besides, here we print the counting result of the each part of the expression for mentor to check it out easy.
  */
+        {
         printf("The %d-%s time:\r\n",i+1,end);
         printf("a=%d(grad) =%.4f(rad)\r\n",(int)(a*180/pi),a);
         printf("-----\r\n");
@@ -59,7 +60,7 @@ int main()
   /*
                         PRINTF block end
  */
-
+        }
     }
     return 0;
 }
