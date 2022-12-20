@@ -17,11 +17,6 @@ int main()
         double a=(double)((pi/12)*i);   //here we created the angle (a) for each counting with a step of 15 grades
         double z1=cos(a)+cos(2*a)+cos(6*a)+cos(7*a);
         double z2=4*cos(a/2)*cos(5*a/2)*cos(4*a);
-                    /*
-                                The PRINTF block:
-                    Here we print the result for each of 5-th countings.
-                    Besides, here we print the counting result of the each part of the expression for mentor to check it out easy.
-                    */
             {
                 printf("result %d for a=%d(grad) =%.4f(rad):\r\n",i+1,(int)(a*180/pi),a);
                 printf("-----\r\n");
@@ -29,7 +24,6 @@ int main()
                 printf("\r\n");
                 printf("z2=%.4f         =4*cos(a/2)*cos(5*a/2)*cos(4*a)\r\n",z2);
                 printf("--------------------------------------------------------------------------------------------------\r\n");
-                    /*PRINTF block end*/
             }
     }
     return 0;
