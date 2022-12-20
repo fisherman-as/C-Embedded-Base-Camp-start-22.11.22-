@@ -36,26 +36,11 @@ int main()
         Besides, here we print the counting result of the each part of the expression for mentor to check it out easy.
  */
         {
-        printf("The %d-%s time:\r\n",i+1,end);
-        printf("a=%d(grad) =%.4f(rad)\r\n",(int)(a*180/pi),a);
+        printf("result %d for a=%d(grad) =%.4f(rad):\r\n",i+1,(int)(a*180/pi),a);
         printf("-----\r\n");
         printf("z1=%.4f         =cos(a)+cos(2*a)+cos(6*a)+cos(7*a)\r\n",z1);
-        double x2=cos(a);
-        printf("                  cos(a)=%.4f;    ",x2);
-        double x3=cos(2*a);
-        printf("cos(2*a)=%.4f;  ",x3);
-        double x4=cos(6*a);
-        printf("cos(6*a)=%.4f;  ",x4);
-        double x5=cos(7*a);
-        printf("cos(7*a)=%.4f;\r\n",x5);
         printf("\r\n");
         printf("z2=%.4f         =4*cos(a/2)*cos(5*a/2)*cos(4*a)\r\n",z2);
-        double y2=cos(a/2);
-        printf("                  cos(a/2)=%.4f;  ",y2);
-        double y3=cos(5*a/2);
-        printf("cos(5*a/2)=%.4f;    ",y3);
-        double y4=cos(4*a);
-        printf("cos(4*a)=%.4f;\r\n",y4);
         printf("--------------------------------------------------------------------------------------------------\r\n");
   /*
                         PRINTF block end
