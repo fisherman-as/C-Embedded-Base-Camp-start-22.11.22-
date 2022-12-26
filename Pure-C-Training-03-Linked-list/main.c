@@ -19,10 +19,7 @@ int main()
   Book_Init(&Book3, "Harry Potter and the Prisoner of Azkaban", 403.32, 1027, "Ukrainian", 399, 2000);
   Book_Init(&Book4, "Harry Potter and the Goblet of Fire", 455, 812, "Spanish", 308, 2002);
 
-  Book_Print(&Book1);
-  Book_Print(&Book2);
-  Book_Print(&Book3);
-  Book_Print(&Book4);
+  Book_PrintAll(&Book1);
 }
 
 void Book_Link(struct Book* this, const struct Book* link)
@@ -48,4 +45,13 @@ void Book_Print(struct Book* this)
   ,this->title,this->price,this->NumberOfPages,this->language,this->weight,this->year);
   printf("------------------------\r\n\r\n");
   return;
+}
+
+void Book_PrintAll(struct Book* this)
+{
+while(this!=NULL)
+  {
+    Book_Print(this);
+    this=this->next;
+  }
 }
