@@ -34,6 +34,7 @@
 #define CHANNELS 4
 #define FREQ_MIN 0      //0kHz, there is not any generation
 #define FREQ_MAX 100000 //100kHz
+#define TMR4_FREQUENCY 84000000 //depends on clock settings
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -47,6 +48,10 @@ TIM_HandleTypeDef htim4;
 /* USER CODE BEGIN PV */
 const uint32_t FREQMIN=FREQ_MIN;
 const uint32_t FREQMAX=FREQ_MAX;
+const uint32_t TMR4FREQUENCY=TMR4_FREQUENCY;
+PWM TIMERSETTINGS;
+PWM* pTIMERSETTINGS=&TIMERSETTINGS;
+FLAGS ButtonFlag={0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -54,8 +59,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM4_Init(void);
 /* USER CODE BEGIN PFP */
-PWM TIMERSETTINGS;
-PWM* pTIMERSETTINGS=&TIMERSETTINGS;
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -98,17 +102,29 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-HAL_TIM_Base_Init(&htim4);
-HAL_TIM_Base_Start(&htim4);
-HAL_TIM_PWM_Init(&htim4);
-DefaultChannelCreate(pTIMERSETTINGS);
-Tim4ReInit(htim4, pTIMERSETTINGS);
 
+  TIMERSETTINGS.Channel=TIM_CHANNEL_1;
+  TIMERSETTINGS.Frequency=5000;
+  TIMERSETTINGS.DutyCycle=50;
+  {
+  uint32_t ARRvalue=(uint32_t)(TMR4FREQUENCY/pTIMERSETTINGS->Frequency)-1;
+  uint32_t CCRvalue=(uint32_t)(((pTIMERSETTINGS->DutyCycle)*(ARRvalue+1))/100);
+  TIM4->ARR=ARRvalue;
+  TIM4->CCR1=CCRvalue;
+  HAL_TIM_PWM_Start(&htim4, pTIMERSETTINGS->Channel);
+  }
   while (1)
   {
+	  //ButtonsHandler(htim4);
+	  /*
+	  static uint32_t counter=0;
+	 if ( counter<HAL_GetTick())
+	 {
+		 counter=HAL_GetTick();
+		 ButtonsHandler(htim4);
+	 }
+*/
 
-Tim4ReInit(htim4, pTIMERSETTINGS);
-HAL_Delay(10000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -272,27 +288,34 @@ static void MX_GPIO_Init(void)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	TimPWMStop(htim4);
+	//HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_ALL); // !!!!!!!!!!!!! IT DOESN'T WORK!!!!!!!!!!!!!!!
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_4);
+
 	switch (GPIO_Pin)
 	    {
 	    case SW1_Pin:
-	      SW1Handler(pTIMERSETTINGS); //this button decreases a frequency
+	      SW1Handler(htim4, pTIMERSETTINGS); //this button decreases a frequency
 	      break;
 	    case SW2_Pin:
-	      SW2Handler(pTIMERSETTINGS); //this button selects the signal output
+	      SW2Handler(htim4, pTIMERSETTINGS); //this button selects the signal output
 	      break;
 	    case SW3_Pin:
-	      SW3Handler(pTIMERSETTINGS); //this button increases a frequency
+	      SW3Handler(htim4, pTIMERSETTINGS); //this button increases a frequency
 	      break;
 	    case SW4_Pin:
-	      SW4Handler(pTIMERSETTINGS); //this button increases the duty cycle
+	      SW4Handler(htim4, pTIMERSETTINGS); //this button increases the duty cycle
 	      break;
 	    case SW5_Pin:
-	      SW5Handler(pTIMERSETTINGS); //this button decreases the duty cycle
+	      SW5Handler(htim4, pTIMERSETTINGS); //this button decreases the duty cycle
 	      break;
 	    default:
 	     break;
 	    }
+	Tim4ReInit(htim4, pTIMERSETTINGS);
+
 }
 
 /* USER CODE END 4 */

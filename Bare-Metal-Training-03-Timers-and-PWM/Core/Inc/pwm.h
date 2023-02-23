@@ -16,17 +16,22 @@ typedef struct
 	  uint32_t Channel;     //channel number
 	  uint32_t Frequency;
       uint32_t DutyCycle;
-      //the next is the pointer to function that configures PWM channel
-      void (*pPWMHandle)(uint32_t Channel, uint32_t Frequency,uint32_t DutyCycle);
     }PWM;
+typedef struct
+    {
+      uint32_t SW1FLAG:1;
+      uint32_t SW2FLAG:1;
+      uint32_t SW3FLAG:1;
+      uint32_t SW4FLAG:1;
+      uint32_t SW5FLAG:1;
+    }FLAGS;
 
-void DefaultChannelCreate(PWM*);
-void TimPWMStop(TIM_HandleTypeDef timer);
-void SW1Handler(PWM* pTIMERSETTINGS);//this button decreases a frequency
-void SW2Handler(PWM* pTIMERSETTINGS);//this button selects the signal output
-void SW3Handler(PWM* pTIMERSETTINGS);//this button increases a frequency
-void SW4Handler(PWM* pTIMERSETTINGS);//this button increases the duty cycle
-void SW5Handler(PWM* pTIMERSETTINGS);//this button decreases the duty cycle
+void SW1Handler(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS);//this button decreases a frequency
+void SW2Handler(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS);//this button selects the signal output
+void SW3Handler(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS);//this button increases a frequency
+void SW4Handler(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS);//this button increases the duty cycle
+void SW5Handler(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS);//this button decreases the duty cycle
 void Tim4ReInit(TIM_HandleTypeDef timer,PWM* this);
+void ButtonsHandler(TIM_HandleTypeDef timer);
 
 #endif /* INC_PWM_H_ */
