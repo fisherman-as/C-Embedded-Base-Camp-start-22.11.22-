@@ -10,16 +10,23 @@
 extern const uint32_t TMR4FREQUENCY;
 extern const uint32_t FREQMIN;
 extern const uint32_t FREQMAX;
-extern FLAGS ButtonFlag;
 extern PWM* pTIMERSETTINGS;
+extern const uint32_t PRESSNUM;
 
+void StopChannels(TIM_HandleTypeDef timer)
+{
+	HAL_TIM_PWM_Stop(&timer, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&timer, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Stop(&timer, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Stop(&timer, TIM_CHANNEL_4);
+}
 void SW1Handler(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS) //this button decreases a frequency
 {
-	pTIMERSETTINGS->Frequency-=5000;
-	if (pTIMERSETTINGS->Frequency<FREQMIN)
-	     {pTIMERSETTINGS->Frequency=FREQMIN;}
-	else
-	     {}
+	if (pTIMERSETTINGS->Frequency>=5000)
+	{
+	  pTIMERSETTINGS->Frequency-=5000;
+	}
+	else {}
 }
 void SW2Handler(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS) //this button selects the signal output
 {
@@ -48,24 +55,22 @@ void SW3Handler(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS) //this button incr
 	pTIMERSETTINGS->Frequency+=5000;
 	if (pTIMERSETTINGS->Frequency>FREQMAX)
 	     {pTIMERSETTINGS->Frequency=FREQMAX;}
-	else
-	     {}
+	else {}
 }
 void SW4Handler(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS) //this button increases the duty cycle
   {
 	pTIMERSETTINGS->DutyCycle+=5;//+5% of the period
 	if (pTIMERSETTINGS->DutyCycle>100)
 	     {pTIMERSETTINGS->DutyCycle=100;}
-	else
-	     {}
+	else {}
   }
 void SW5Handler(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS) //this button decreases the duty cycle
   {
-	pTIMERSETTINGS->DutyCycle-=5;//-5% of the period
-	if (pTIMERSETTINGS->DutyCycle<0)
-	     {pTIMERSETTINGS->DutyCycle=0;}
-	else
-	     {}
+    #define STEP 5
+	if (pTIMERSETTINGS->DutyCycle>=STEP)
+	{pTIMERSETTINGS->DutyCycle-=STEP;}//-5% of the period
+	else {}
+    #undef STEP
   }
 
 void Tim4ReInit(TIM_HandleTypeDef timer, PWM* pwm)
@@ -91,34 +96,69 @@ TIM4->ARR=ARRvalue;
 	  TIM4->CCR1=CCRvalue;
 	  break;
   }
-  HAL_TIM_PWM_Start(&timer, pwm->Channel);
+HAL_TIM_PWM_Start(&timer, pwm->Channel);
 }
 
 void ButtonsHandler(TIM_HandleTypeDef timer)
 {
-	if (!HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin))
+	static uint32_t TimeCounter=0;
+	static struct
+		  {
+		    uint32_t SW1:10;
+		    uint32_t SW2:10;
+		    uint32_t SW3:10;
+		    uint32_t SW4:10;
+		    uint32_t SW5:10;
+		  }PressCounter={0};
+	if (TimeCounter<HAL_GetTick())
 	{
-	    SW1Handler(timer, pTIMERSETTINGS); //this button decreases a frequency
-    }
-	else if (!HAL_GPIO_ReadPin(SW2_GPIO_Port, SW2_Pin))
-	{
-		SW2Handler(timer, pTIMERSETTINGS); //this button selects the signal output
+		  if (HAL_GPIO_ReadPin(SW1_GPIO_Port, SW1_Pin)==GPIO_PIN_RESET) {PressCounter.SW1++;}
+		  else if (PressCounter.SW1>0) {PressCounter.SW1--;}
+		  if (HAL_GPIO_ReadPin(SW2_GPIO_Port, SW2_Pin)==GPIO_PIN_RESET) {PressCounter.SW2++;}
+		  else if (PressCounter.SW2>0) {PressCounter.SW2--;}
+		  if (HAL_GPIO_ReadPin(SW3_GPIO_Port, SW3_Pin)==GPIO_PIN_RESET) {PressCounter.SW3++;}
+		  else if (PressCounter.SW3>0) {PressCounter.SW3--;}
+		  if (HAL_GPIO_ReadPin(SW4_GPIO_Port, SW4_Pin)==GPIO_PIN_RESET) {PressCounter.SW4++;}
+		  else if (PressCounter.SW4>0) {PressCounter.SW4--;}
+		  if (HAL_GPIO_ReadPin(SW5_GPIO_Port, SW5_Pin)==GPIO_PIN_RESET) {PressCounter.SW5++;}
+		  else if (PressCounter.SW5>0) {PressCounter.SW5--;}
 	}
-	else if (!HAL_GPIO_ReadPin(SW3_GPIO_Port, SW3_Pin))
+	TimeCounter=HAL_GetTick();
+	if (PressCounter.SW1>=PRESSNUM)
 	{
-		SW3Handler(timer, pTIMERSETTINGS); //this button increases a frequency
-	}
-	else if (!HAL_GPIO_ReadPin(SW4_GPIO_Port, SW4_Pin))
+		StopChannels(timer);
+		SW1Handler(timer, pTIMERSETTINGS);
+		Tim4ReInit(timer, pTIMERSETTINGS);
+		PressCounter.SW1=0;
+	} //this button decreases a frequency
+	if (PressCounter.SW2>=PRESSNUM)
 	{
-		SW4Handler(timer, pTIMERSETTINGS); //this button increases the duty cycle
-	}
-	else if (!HAL_GPIO_ReadPin(SW5_GPIO_Port, SW5_Pin))
+		StopChannels(timer);
+		SW2Handler(timer, pTIMERSETTINGS);
+		Tim4ReInit(timer, pTIMERSETTINGS);
+		PressCounter.SW2=0;
+	} //this button selects the signal output
+	if (PressCounter.SW3>=PRESSNUM)
 	{
-		SW5Handler(timer, pTIMERSETTINGS); //this button decreases the duty cycle
-	}
-	else
+		StopChannels(timer);
+		SW3Handler(timer, pTIMERSETTINGS);
+		Tim4ReInit(timer, pTIMERSETTINGS);
+		PressCounter.SW3=0;
+	} //this button increases a frequency
+	if (PressCounter.SW4>=PRESSNUM)
 	{
+		StopChannels(timer);
+		SW4Handler(timer, pTIMERSETTINGS);
+		Tim4ReInit(timer, pTIMERSETTINGS);
+		PressCounter.SW4=0;
+	} //this button increases the duty cycle
+	if (PressCounter.SW5>=PRESSNUM)
+	{
+		StopChannels(timer);
+		SW5Handler(timer, pTIMERSETTINGS);
+		Tim4ReInit(timer, pTIMERSETTINGS);
+		PressCounter.SW5=0;
+	} //this button decreases the duty cycle
 
-	}
 }
 

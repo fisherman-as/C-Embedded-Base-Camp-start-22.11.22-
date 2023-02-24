@@ -31,10 +31,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define CHANNELS 4
 #define FREQ_MIN 0      //0kHz, there is not any generation
 #define FREQ_MAX 100000 //100kHz
 #define TMR4_FREQUENCY 84000000 //depends on clock settings
+#define PRESS_NUM 100   //less than 256!! (the time we have to press a button)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -46,12 +46,12 @@
 TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN PV */
-const uint32_t FREQMIN=FREQ_MIN;
-const uint32_t FREQMAX=FREQ_MAX;
-const uint32_t TMR4FREQUENCY=TMR4_FREQUENCY;
-PWM TIMERSETTINGS;
-PWM* pTIMERSETTINGS=&TIMERSETTINGS;
-FLAGS ButtonFlag={0};
+const uint32_t FREQMIN=FREQ_MIN;             //PWM parameter
+const uint32_t FREQMAX=FREQ_MAX;             //PWM parameter
+const uint32_t TMR4FREQUENCY=TMR4_FREQUENCY; //frequency of tim4 clock
+const uint32_t PRESSNUM=PRESS_NUM;
+PWM TIMERSETTINGS;                           //this structure contains PWM settings
+PWM* pTIMERSETTINGS=&TIMERSETTINGS;          //pointer
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -104,27 +104,18 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   TIMERSETTINGS.Channel=TIM_CHANNEL_1;
-  TIMERSETTINGS.Frequency=5000;
+  TIMERSETTINGS.Frequency=50000;
   TIMERSETTINGS.DutyCycle=50;
   {
-  uint32_t ARRvalue=(uint32_t)(TMR4FREQUENCY/pTIMERSETTINGS->Frequency)-1;
+  uint16_t ARRvalue=(uint16_t)(TMR4FREQUENCY/pTIMERSETTINGS->Frequency)-1;
   uint32_t CCRvalue=(uint32_t)(((pTIMERSETTINGS->DutyCycle)*(ARRvalue+1))/100);
   TIM4->ARR=ARRvalue;
   TIM4->CCR1=CCRvalue;
   HAL_TIM_PWM_Start(&htim4, pTIMERSETTINGS->Channel);
-  }
+  } //the end of default PWM setup
   while (1)
   {
-	  //ButtonsHandler(htim4);
-	  /*
-	  static uint32_t counter=0;
-	 if ( counter<HAL_GetTick())
-	 {
-		 counter=HAL_GetTick();
-		 ButtonsHandler(htim4);
-	 }
-*/
-
+	  ButtonsHandler(htim4);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -315,7 +306,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	     break;
 	    }
 	Tim4ReInit(htim4, pTIMERSETTINGS);
-
 }
 
 /* USER CODE END 4 */
