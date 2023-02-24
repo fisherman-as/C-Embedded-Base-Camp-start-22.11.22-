@@ -34,7 +34,7 @@
 #define FREQ_MIN 0      //0kHz, there is not any generation
 #define FREQ_MAX 100000 //100kHz
 #define TMR4_FREQUENCY 84000000 //depends on clock settings
-#define PRESS_NUM 100   //less than 256!! (the time we have to press a button)
+#define PRESS_NUM 200   //less than 1024!! (the time we have to press a button)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -102,7 +102,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
+/*------------Default PWM setup-----------------*/
   TIMERSETTINGS.Channel=TIM_CHANNEL_1;
   TIMERSETTINGS.Frequency=50000;
   TIMERSETTINGS.DutyCycle=50;
