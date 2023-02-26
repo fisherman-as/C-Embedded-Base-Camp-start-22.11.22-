@@ -31,9 +31,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define FREQ_MIN 0      //0kHz, there is not any generation
-#define FREQ_MAX 100000 //100kHz
-#define TMR4_FREQUENCY 84000000 //depends on clock settings
+
+
+
 #define PRESS_NUM 100   //less than 1024!! (the time we have to press a button)
 /* USER CODE END PD */
 
@@ -46,9 +46,6 @@
 TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN PV */
-const uint32_t FREQMIN=FREQ_MIN;             //PWM parameter
-const uint32_t FREQMAX=FREQ_MAX;             //PWM parameter
-const uint32_t TMR4FREQUENCY=TMR4_FREQUENCY; //frequency of tim4 clock
 const uint32_t PRESSNUM=PRESS_NUM;
 PWM TIMERSETTINGS;                           //this structure contains PWM settings
 PWM* pTIMERSETTINGS=&TIMERSETTINGS;          //pointer
@@ -102,23 +99,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-/*------------Default PWM setup-----------------*/
-  TIMERSETTINGS.Channel=TIM_CHANNEL_1;
-  TIMERSETTINGS.Frequency=50000;
-  TIMERSETTINGS.DutyCycle=50;
-  {
-  uint16_t ARRvalue=(uint16_t)(TMR4FREQUENCY/pTIMERSETTINGS->Frequency)-1;
-  uint32_t CCRvalue=(uint16_t)(((pTIMERSETTINGS->DutyCycle)*(ARRvalue+1))/100);
-  TIM4->ARR=ARRvalue;
-  TIM4->CCR1=CCRvalue;
-  HAL_TIM_PWM_Start(&htim4, pTIMERSETTINGS->Channel);
-  } //the end of default PWM setup
+  /*--------------------------------MAIN---------------------------*/
+DefaultPWMSetup(htim4, pTIMERSETTINGS);
   while (1)
   {
-	  ButtonsHandler(htim4);
+	 ButtonsHandler(htim4);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+  /*-----------------------------END OF MAIN---------------------------*/
   }
   /* USER CODE END 3 */
 }

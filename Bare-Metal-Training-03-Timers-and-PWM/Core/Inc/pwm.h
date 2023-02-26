@@ -28,6 +28,7 @@ typedef struct
 	typedef enum
 	{None=0,SW1,SW2,SW3,SW4,SW5}BUTTON;
 
+void DefaultPWMSetup( TIM_HandleTypeDef, PWM*);
 void StopChannels(TIM_HandleTypeDef); //stops all 4 PWM channels
 void HandlePWM(BUTTON, BUTTONCOUNTER*, TIM_HandleTypeDef, PWM*);
 void SW1Handler(TIM_HandleTypeDef, PWM*);//this button decreases a frequency

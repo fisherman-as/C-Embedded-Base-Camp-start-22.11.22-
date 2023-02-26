@@ -7,10 +7,9 @@
 #include "pwm.h"
 #include "main.h"
 #include <string.h>
-#include "stm32f4xx_hal_tim.h"
-extern const uint32_t TMR4FREQUENCY;
-extern const uint32_t FREQMIN;
-extern const uint32_t FREQMAX;
+#define FREQMIN 0      //0kHz, there is not any generation
+#define FREQMAX 100000 //100kHz
+#define TMR4FREQUENCY 84000000 //depends on clock settings
 extern PWM* pTIMERSETTINGS;
 extern const uint32_t PRESSNUM;
 BUTTONCOUNTER PressCounter={0};
@@ -80,19 +79,19 @@ void SW5Handler(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS) //this button decr
     #undef STEP
   }
 
-void Tim4ReInit(TIM_HandleTypeDef timer, PWM* pwm)
+void Tim4ReInit(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS)
 {
 	HAL_TIM_PWM_Init(&timer);
 	static uint16_t ARRvalue=0;
 	static uint16_t CCRvalue=0;
-	if (pwm->Frequency>0)
+	if (pTIMERSETTINGS->Frequency>0)
 	{
-	  ARRvalue=(uint16_t)(TMR4FREQUENCY/pwm->Frequency)-1;
-	  CCRvalue=(uint16_t)(((pwm->DutyCycle)*(ARRvalue+1))/100);
+	  ARRvalue=(uint16_t)(TMR4FREQUENCY/pTIMERSETTINGS->Frequency)-1;
+	  CCRvalue=(uint16_t)(((pTIMERSETTINGS->DutyCycle)*(ARRvalue+1))/100);
 	}
 	else {CCRvalue=0;}
 	TIM4->ARR=ARRvalue;
-  switch (pwm->Channel)
+  switch (pTIMERSETTINGS->Channel)
   {
     case TIM_CHANNEL_1:
 	  TIM4->CCR1=CCRvalue;
@@ -116,9 +115,9 @@ void Tim4ReInit(TIM_HandleTypeDef timer, PWM* pwm)
 	  //TIM4->CCR1=CCRvalue;
 	  break;
   }
-  if (pwm->Channel!=TIM_CHANNEL_ALL)
+  if (pTIMERSETTINGS->Channel!=TIM_CHANNEL_ALL)
     {
-	  HAL_TIM_PWM_Start(&timer, pwm->Channel);
+	  HAL_TIM_PWM_Start(&timer, pTIMERSETTINGS->Channel);
     }
 }
 
@@ -148,7 +147,7 @@ void ButtonsHandler(TIM_HandleTypeDef timer)
 	HandlePWM(Button, pPressCounter, timer, pTIMERSETTINGS);
 }
 
-void HandlePWM(BUTTON Button, BUTTONCOUNTER* pPressCounter, TIM_HandleTypeDef timer, PWM* pwm)
+void HandlePWM(BUTTON Button, BUTTONCOUNTER* pPressCounter, TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS)
 {
 	if (Button!=None)
 	{
@@ -176,4 +175,17 @@ void HandlePWM(BUTTON Button, BUTTONCOUNTER* pPressCounter, TIM_HandleTypeDef ti
 	    memset(pPressCounter,0,sizeof(PressCounter));
 	    Tim4ReInit(timer, pTIMERSETTINGS);
 	}
+}
+void DefaultPWMSetup( TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS)
+{
+	pTIMERSETTINGS->Channel=TIM_CHANNEL_1;
+	pTIMERSETTINGS->Frequency=50000;
+	pTIMERSETTINGS->DutyCycle=50;
+	  {
+	  uint16_t ARRvalue=(uint16_t)(TMR4FREQUENCY/pTIMERSETTINGS->Frequency)-1;
+	  uint32_t CCRvalue=(uint16_t)(((pTIMERSETTINGS->DutyCycle)*(ARRvalue+1))/100);
+	  TIM4->ARR=ARRvalue;
+	  TIM4->CCR1=CCRvalue;
+	  HAL_TIM_PWM_Start(&timer, pTIMERSETTINGS->Channel);
+	  }
 }
