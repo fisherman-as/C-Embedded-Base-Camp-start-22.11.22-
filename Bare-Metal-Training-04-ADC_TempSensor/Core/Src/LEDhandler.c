@@ -17,23 +17,23 @@ void LedRedBlinkAlert(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS)
 {
 pTIMERSETTINGS->Frequency=2;
 pTIMERSETTINGS->DutyCycle[RED]=50;
-Tim4ReInit(timer, pTIMERSETTINGS);
+Tim4ReInit(&timer, pTIMERSETTINGS);
 /*-------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------------------*/
 HAL_Delay(10000);//So, if we have such blinking, we surely understand that there is a problem in the program
 /*-------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------------------*/
 }
 
-void StopChannels(TIM_HandleTypeDef timer)
+void StopChannels(TIM_HandleTypeDef* timer)
 {
-	HAL_TIM_PWM_Stop(&timer, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Stop(&timer, TIM_CHANNEL_2);
-	HAL_TIM_PWM_Stop(&timer, TIM_CHANNEL_3);
-	HAL_TIM_PWM_Stop(&timer, TIM_CHANNEL_4);
+	HAL_TIM_PWM_Stop(timer, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(timer, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Stop(timer, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Stop(timer, TIM_CHANNEL_4);
 }
 
-void Tim4ReInit(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS)
+void Tim4ReInit(TIM_HandleTypeDef* timer, PWM* pTIMERSETTINGS)
 {
-	HAL_TIM_PWM_Init(&timer);
+	HAL_TIM_PWM_Init(timer);
 	static uint16_t ARRvalue=0;
 	static uint16_t CCRvalue[3]={0};
 
@@ -52,8 +52,8 @@ void Tim4ReInit(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS)
     TIM4->CCR3=CCRvalue[2];
     TIM4->CCR4=CCRvalue[3];
     //HAL_TIM_PWM_Start(&timer, TIM_CHANNEL_ALL);
-    HAL_TIM_PWM_Start(&timer, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&timer, TIM_CHANNEL_2);
-    HAL_TIM_PWM_Start(&timer, TIM_CHANNEL_3);
-    HAL_TIM_PWM_Start(&timer, TIM_CHANNEL_4);
+    HAL_TIM_PWM_Start(timer, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(timer, TIM_CHANNEL_2);
+    HAL_TIM_PWM_Start(timer, TIM_CHANNEL_3);
+    HAL_TIM_PWM_Start(timer, TIM_CHANNEL_4);
 }

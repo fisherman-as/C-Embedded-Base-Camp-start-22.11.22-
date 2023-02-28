@@ -19,8 +19,8 @@ typedef struct
 
 
 void LedRedBlinkAlert(TIM_HandleTypeDef, PWM*);
-void StopChannels(TIM_HandleTypeDef); //stops all 4 PWM channels
-void Tim4ReInit(TIM_HandleTypeDef, PWM*);//restart of the PWM with updated settings
+void StopChannels(TIM_HandleTypeDef*); //stops all 4 PWM channels
+void Tim4ReInit(TIM_HandleTypeDef*, PWM*);//restart of the PWM with updated settings
 
 
 /*-------------------User defined API-------------------------*/

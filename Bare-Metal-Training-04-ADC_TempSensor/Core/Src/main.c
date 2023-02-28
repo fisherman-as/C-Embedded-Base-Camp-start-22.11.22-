@@ -101,59 +101,20 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-
-// else {HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);HAL_Delay(10000);}
-  /*
- uint32_t adcValue = 0;
- pTIMERSETTINGS->Frequency=100;
- for (uint32_t i=1; i<5;i++)
- {pTIMERSETTINGS->DutyCycle[i]=20*i;}
-*/
  while (1)
   {
 
-	 ReadADC(hadc1, pTIMERSETTINGS);
-	 HAL_Delay(1000);
-	 /*
-	 Tim4ReInit(htim4, pTIMERSETTINGS);
 
-*/
-	 /*
-Status=HAL_ADC_PollForConversion(&hadc1, 100);
-if (Status!=HAL_OK)
-{
-HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-HAL_Delay(1000);
-}
-else {HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);HAL_Delay(3000);}
-*/
+	 HandleVoltageChannel(&hadc1, pTIMERSETTINGS);
+	 HAL_Delay(100);
 
-	/*
-	 *
-	 *
-HAL_ADC_Start(&hadc1);
-Status = HAL_ADC_PollForConversion(&hadc1, 1);
 
-if (Status == HAL_OK)
-	adcValue = HAL_ADC_GetValue(&hadc1);
+	 HandleExtTempChannel(&hadc1, pTIMERSETTINGS);
+	 HAL_Delay(100);
 
-if (adcValue < 1680)
-{
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
-}
-else
-{
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
-}
-HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
-//HAL_Delay(1000);
- *
- *
- *
- *
- */
+
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -214,7 +175,6 @@ static void MX_ADC1_Init(void)
   /* USER CODE END ADC1_Init 0 */
 
   ADC_ChannelConfTypeDef sConfig = {0};
-  ADC_InjectionConfTypeDef sConfigInjected = {0};
 
   /* USER CODE BEGIN ADC1_Init 1 */
 
@@ -231,7 +191,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.NbrOfConversion = 3;
   hadc1.Init.DMAContinuousRequests = DISABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
@@ -249,28 +209,22 @@ static void MX_ADC1_Init(void)
     Error_Handler();
   }
 
-  /** Configures for the selected ADC injected channel its corresponding rank in the sequencer and its sample time
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfigInjected.InjectedChannel = ADC_CHANNEL_9;
-  sConfigInjected.InjectedRank = 1;
-  sConfigInjected.InjectedNbrOfConversion = 2;
-  sConfigInjected.InjectedSamplingTime = ADC_SAMPLETIME_112CYCLES;
-  sConfigInjected.ExternalTrigInjecConvEdge = ADC_EXTERNALTRIGINJECCONVEDGE_NONE;
-  sConfigInjected.ExternalTrigInjecConv = ADC_INJECTED_SOFTWARE_START;
-  sConfigInjected.AutoInjectedConv = DISABLE;
-  sConfigInjected.InjectedDiscontinuousConvMode = DISABLE;
-  sConfigInjected.InjectedOffset = 0;
-  if (HAL_ADCEx_InjectedConfigChannel(&hadc1, &sConfigInjected) != HAL_OK)
+  sConfig.Channel = ADC_CHANNEL_9;
+  sConfig.Rank = 2;
+  sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
 
-  /** Configures for the selected ADC injected channel its corresponding rank in the sequencer and its sample time
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfigInjected.InjectedChannel = ADC_CHANNEL_TEMPSENSOR;
-  sConfigInjected.InjectedRank = 2;
-  sConfigInjected.InjectedSamplingTime = ADC_SAMPLETIME_56CYCLES;
-  if (HAL_ADCEx_InjectedConfigChannel(&hadc1, &sConfigInjected) != HAL_OK)
+  sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
+  sConfig.Rank = 3;
+  sConfig.SamplingTime = ADC_SAMPLETIME_112CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
@@ -300,7 +254,7 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 8000-1;
+  htim4.Init.Prescaler = 2000-1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim4.Init.Period = 10-1;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
