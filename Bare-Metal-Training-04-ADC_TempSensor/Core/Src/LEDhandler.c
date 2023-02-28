@@ -7,11 +7,21 @@
 #include "main.h"
 #include "LEDhandler.h"
 
-#define TMR4FREQUENCY 8000000
+#define TMR4FREQUENCY 1000
 
-extern PWM TIMERSETTINGS;      //this structure contains PWM settings (now - default)
+extern PWM TIMERSETTINGS;   //this structure contains PWM settings (now - default)
 extern PWM* pTIMERSETTINGS; //pointer
 
+
+void LedRedBlinkAlert(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS)
+{
+pTIMERSETTINGS->Frequency=2;
+pTIMERSETTINGS->DutyCycle[RED]=50;
+Tim4ReInit(timer, pTIMERSETTINGS);
+/*-------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------------------*/
+HAL_Delay(10000);//So, if we have such blinking, we surely understand that there is a problem in the program
+/*-------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------------------*/
+}
 
 void StopChannels(TIM_HandleTypeDef timer)
 {

@@ -46,7 +46,7 @@ TIM_HandleTypeDef htim4;
 /* USER CODE BEGIN PV */
 PWM TIMERSETTINGS={100,{0}};
 PWM* pTIMERSETTINGS=&TIMERSETTINGS;
-HAL_StatusTypeDef Status=HAL_BUSY;
+//HAL_StatusTypeDef Status=HAL_BUSY;
 
 /* USER CODE END PV */
 
@@ -100,25 +100,24 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
- Status=HAL_ADC_Start(&hadc1);
- if (Status!=HAL_OK)
- {
-HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
-HAL_Delay(10000);
- }
+
 
 // else {HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);HAL_Delay(10000);}
+  /*
  uint32_t adcValue = 0;
  pTIMERSETTINGS->Frequency=100;
- for (uint32_t i=0; i<4;i++)
- {pTIMERSETTINGS->DutyCycle[i]=20*(i+1);}
-
+ for (uint32_t i=1; i<5;i++)
+ {pTIMERSETTINGS->DutyCycle[i]=20*i;}
+*/
  while (1)
   {
 
+	 ReadADC(hadc1, pTIMERSETTINGS);
+	 HAL_Delay(1000);
+	 /*
 	 Tim4ReInit(htim4, pTIMERSETTINGS);
-	 HAL_Delay(10000);
 
+*/
 	 /*
 Status=HAL_ADC_PollForConversion(&hadc1, 100);
 if (Status!=HAL_OK)
@@ -301,9 +300,9 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 7;
+  htim4.Init.Prescaler = 8000-1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 10000;
+  htim4.Init.Period = 10-1;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
