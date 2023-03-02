@@ -44,9 +44,8 @@ ADC_HandleTypeDef hadc1;
 TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN PV */
-PWM TIMERSETTINGS={100,{0}};
+PWM TIMERSETTINGS={400,{0}};
 PWM* pTIMERSETTINGS=&TIMERSETTINGS;
-//HAL_StatusTypeDef Status=HAL_BUSY;
 
 /* USER CODE END PV */
 
@@ -101,19 +100,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
+
  while (1)
   {
 
-
-	 HandleVoltageChannel(&hadc1, pTIMERSETTINGS);
-	 HAL_Delay(100);
-
-
-	 HandleExtTempChannel(&hadc1, pTIMERSETTINGS);
-	 HAL_Delay(100);
-
-
-
+	 HandleChannels(&hadc1, pTIMERSETTINGS);
+	 HAL_Delay(1000);
 
     /* USER CODE END WHILE */
 
@@ -322,7 +314,17 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+/*
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+	  //adcValue[adcId] = HAL_ADC_GetValue(&hadc1);
 
+	if (adcId==0) adcValue0=HAL_ADC_GetValue(&hadc1);
+	if (adcId==1) adcValue1=HAL_ADC_GetValue(&hadc1);
+	if (adcId==2) adcValue2=HAL_ADC_GetValue(&hadc1);
+	  adcId = (adcId + 1) % 3;                     //so, it can be 0, 1 or 2 only
+}
+*/
 /* USER CODE END 4 */
 
 /**

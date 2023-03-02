@@ -7,7 +7,7 @@
 #include "main.h"
 #include "LEDhandler.h"
 
-#define TMR4FREQUENCY 1000
+#define TMR4FREQUENCY 4000
 
 extern PWM TIMERSETTINGS;   //this structure contains PWM settings (now - default)
 extern PWM* pTIMERSETTINGS; //pointer
@@ -15,7 +15,7 @@ extern PWM* pTIMERSETTINGS; //pointer
 
 void LedRedBlinkAlert(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS)
 {
-pTIMERSETTINGS->Frequency=2;
+pTIMERSETTINGS->Frequency=1;
 pTIMERSETTINGS->DutyCycle[RED]=50;
 Tim4ReInit(&timer, pTIMERSETTINGS);
 /*-------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------------------*/

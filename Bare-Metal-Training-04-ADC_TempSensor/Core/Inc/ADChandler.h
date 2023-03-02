@@ -12,9 +12,8 @@
 
 typedef enum {VOLTAGE, EXT_TEMP, INT_TEMP}ADC_CHANNEL;
 
-void ADCConfChannel(ADC_HandleTypeDef*, uint32_t, uint32_t, uint32_t);
-uint32_t ReadADC(ADC_HandleTypeDef*, PWM*);
-void LedHandle(COLOR, uint32_t, PWM*);
 void HandleVoltageChannel(ADC_HandleTypeDef*, PWM*);
 void HandleExtTempChannel(ADC_HandleTypeDef*, PWM*);
+void HandleIntTempChannel(ADC_HandleTypeDef*, PWM*);
+void HandleChannels(ADC_HandleTypeDef*, PWM*);
 #endif /* SRC_ADCHANDLER_H_ */
