@@ -16,9 +16,14 @@ typedef struct
 	  uint16_t Frequency;
       uint16_t DutyCycle[4]; //the duty cycle of all the channels. 0=GREEN, 1=ORANGE, 2=RED, 3=BLUE
     }PWM;
+typedef struct
+{
+	uint8_t VoltageFlag;
+	uint8_t IntTempFlag;
+	uint8_t ExtTempFlag;
+}EMERGENCY_FLAG;
 
-
-void LedRedBlinkAlert(TIM_HandleTypeDef, PWM*);
+void HandleLedRedBlinkAlert(EMERGENCY_FLAG*);
 void StopChannels(TIM_HandleTypeDef*); //stops all 4 PWM channels
 void Tim4ReInit(TIM_HandleTypeDef*, PWM*);//restart of the PWM with updated settings
 

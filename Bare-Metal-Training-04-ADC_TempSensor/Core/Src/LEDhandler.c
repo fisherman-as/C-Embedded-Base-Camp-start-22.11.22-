@@ -7,20 +7,31 @@
 #include "main.h"
 #include "LEDhandler.h"
 
-#define TMR4FREQUENCY 4000
+#define TMR4FREQUENCY 400000
 
 extern PWM TIMERSETTINGS;   //this structure contains PWM settings (now - default)
 extern PWM* pTIMERSETTINGS; //pointer
+EMERGENCY_FLAG EMERGENCY={0};
+EMERGENCY_FLAG* pEMERGENCY=&EMERGENCY;
+extern TIM_HandleTypeDef htim6;
 
-
-void LedRedBlinkAlert(TIM_HandleTypeDef timer, PWM* pTIMERSETTINGS)
+void HandleLedRedBlinkAlert(EMERGENCY_FLAG* pEMERGENCY)
 {
-pTIMERSETTINGS->Frequency=1;
-pTIMERSETTINGS->DutyCycle[RED]=50;
-Tim4ReInit(&timer, pTIMERSETTINGS);
-/*-------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------------------*/
-HAL_Delay(10000);//So, if we have such blinking, we surely understand that there is a problem in the program
-/*-------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------------------*/
+	HAL_TIM_Base_Start_IT(&htim6);
+if (EMERGENCY.VoltageFlag+EMERGENCY.IntTempFlag+EMERGENCY.ExtTempFlag==0)
+{
+  HAL_TIM_Base_Stop(&htim6);
+  //TIM6->ARR=0;
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
+}
+else if (EMERGENCY.VoltageFlag+EMERGENCY.IntTempFlag+EMERGENCY.ExtTempFlag==1)
+  {TIM6->ARR=500;}
+else if (EMERGENCY.VoltageFlag+EMERGENCY.IntTempFlag+EMERGENCY.ExtTempFlag==2)
+  {TIM6->ARR=200;}
+else if (EMERGENCY.VoltageFlag+EMERGENCY.IntTempFlag+EMERGENCY.ExtTempFlag==3)
+  {TIM6->ARR=100;}
+else
+  {TIM6->ARR=1;}
 }
 
 void StopChannels(TIM_HandleTypeDef* timer)
