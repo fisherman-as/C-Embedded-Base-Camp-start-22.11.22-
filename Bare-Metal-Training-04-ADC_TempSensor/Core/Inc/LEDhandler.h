@@ -27,9 +27,4 @@ void HandleLedRedBlinkAlert(EMERGENCY_FLAG*);
 void StopChannels(); //stops all 3 PWM channels
 void Tim4ReInit(PWM*);//restart of the PWM with updated settings
 
-
-/*-------------------User defined API-------------------------*/
-extern void LedHandle(COLOR, uint32_t, PWM*);
-/*----------------------------------------------------------- */
-
 #endif /* INC_LEDHANDLER_H_ */
