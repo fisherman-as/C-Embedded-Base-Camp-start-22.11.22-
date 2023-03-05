@@ -12,8 +12,8 @@
 
 typedef enum {VOLTAGE, EXT_TEMP, INT_TEMP}ADC_CHANNEL;
 
-void HandleVoltageChannel(ADC_HandleTypeDef*, PWM*);
-void HandleExtTempChannel(ADC_HandleTypeDef*, PWM*);
-void HandleIntTempChannel(ADC_HandleTypeDef*, PWM*);
-void HandleChannels(ADC_HandleTypeDef*, PWM*);
+void HandleVoltageChannel(PWM*);
+void HandleExtTempChannel(PWM*);
+void HandleIntTempChannel(PWM*);
+void HandleAdcChannels(PWM*);
 #endif /* SRC_ADCHANDLER_H_ */

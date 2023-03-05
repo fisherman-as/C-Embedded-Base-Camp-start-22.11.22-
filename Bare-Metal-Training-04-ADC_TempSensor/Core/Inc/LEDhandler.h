@@ -9,23 +9,23 @@
 #define INC_LEDHANDLER_H_
 #include "main.h"
 
-typedef enum {GREEN, ORANGE, RED, BLUE}COLOR;
+typedef enum {GREEN, ORANGE, BLUE}COLOR;
 
 typedef struct
     {
 	  uint16_t Frequency;
-      uint16_t DutyCycle[4]; //the duty cycle of all the channels. 0=GREEN, 1=ORANGE, 2=RED, 3=BLUE
+      uint16_t DutyCycle[3]; //the duty cycle of three channels. 0=GREEN, 1=ORANGE, 2=BLUE
     }PWM;
 typedef struct
 {
-	uint8_t VoltageFlag;
-	uint8_t IntTempFlag;
-	uint8_t ExtTempFlag;
+	uint32_t VoltageFlag;
+	uint32_t IntTempFlag;
+	uint32_t ExtTempFlag;
 }EMERGENCY_FLAG;
 
 void HandleLedRedBlinkAlert(EMERGENCY_FLAG*);
-void StopChannels(TIM_HandleTypeDef*); //stops all 4 PWM channels
-void Tim4ReInit(TIM_HandleTypeDef*, PWM*);//restart of the PWM with updated settings
+void StopChannels(); //stops all 3 PWM channels
+void Tim4ReInit(PWM*);//restart of the PWM with updated settings
 
 
 /*-------------------User defined API-------------------------*/
