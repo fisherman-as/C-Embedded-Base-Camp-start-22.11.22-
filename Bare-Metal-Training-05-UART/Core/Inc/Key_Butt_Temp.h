@@ -26,5 +26,6 @@ typedef struct
 void PollUart(void);
 void ButtonsAntiJitter(void);
 void PollButtons(void);
+void HandleExtTempChannel(void);
 
 #endif /* INC_UARTCOMM_H_ */

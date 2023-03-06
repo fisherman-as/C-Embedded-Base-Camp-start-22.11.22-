@@ -5,12 +5,15 @@
  *      Author: AS
  */
 #include <Key_Butt_Temp.h>
+#include <stdio.h>
+#include <string.h>
 
 extern UART_HandleTypeDef huart3;
+extern ADC_HandleTypeDef hadc1;
 BUTTONFLAG ButtonState={0};
 BUTTONFLAG* pvButtonState=&ButtonState;
 volatile uint32_t JitterCounter=0;
-
+uint16_t AdcData[1]={0};
 
 void UartSendMessageTogglePin(COLOR color)
 {
@@ -55,8 +58,7 @@ void PollUart(void)
 {
 	uint8_t ReceiveBuffer[1]={0};
     HAL_StatusTypeDef status;
-    status = HAL_UART_Receive(&huart3, ReceiveBuffer, 1, 10);
-
+    status = HAL_UART_Receive(&huart3, ReceiveBuffer, 1, 1);
     if (status == HAL_OK)
       {
         switch (ReceiveBuffer[0])
@@ -87,6 +89,8 @@ void PollUart(void)
 	  		}
     //else if (status==HAL_ERROR||status==HAL_BUSY||status==HAL_TIMEOUT)
       //{HAL_UART_Transmit(&huart3, (uint8_t *)"Something went wrong during receiving\r\n", 39, 10);}
+
+    HAL_Delay(50);
 }
 
 void ButtonsAntiJitter(void)
@@ -94,7 +98,6 @@ void ButtonsAntiJitter(void)
 	pvButtonState->ButtonsPollIsDenied=1;
 	pvButtonState->JitterIsBlocking=1;
 }
-
 
 void PollButtons(void)
 {
@@ -133,6 +136,21 @@ void PollButtons(void)
 }
 
 
+void HandleExtTempChannel()
+{
+	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) AdcData, 1);
+	//HAL_ADC_PollForConversion(&hadc1, 100);
+	//uint16_t ADCValue=HAL_ADC_GetValue(&hadc1);
+	float Voltage=(float)(AdcData[0])*3.3/4096;
+	float Temperature= (float)(101-50*Voltage);
 
+	  uint8_t buffer[10];
+	  sprintf(buffer, "%d", (uint16_t)Temperature);
+
+	HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), 10);
+	HAL_UART_Transmit(&huart3, (uint8_t *)"\r\n", 2, 10);
+	HAL_Delay(1000);
+
+}
 
 
