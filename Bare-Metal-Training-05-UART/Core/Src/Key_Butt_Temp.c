@@ -11,6 +11,46 @@ BUTTONFLAG ButtonState={0};
 BUTTONFLAG* pvButtonState=&ButtonState;
 volatile uint32_t JitterCounter=0;
 
+
+void UartSendMessageTogglePin(COLOR color)
+{
+	switch (color)
+	{
+	case GREEN:
+        HAL_GPIO_TogglePin(GREEN_GPIO_Port, GREEN_Pin);
+        HAL_UART_Transmit(&huart3, (uint8_t *)"GREEN is switched\r\n", 19, 10);
+        if (HAL_GPIO_ReadPin(GREEN_GPIO_Port, GREEN_Pin)==GPIO_PIN_SET)
+          {HAL_UART_Transmit(&huart3, (uint8_t *)"GREEN is ON\r\n", 13, 10);}
+        else {HAL_UART_Transmit(&huart3, (uint8_t *)"GREEN is OFF\r\n", 14, 10);}
+        break;
+	case ORANGE:
+        HAL_GPIO_TogglePin(ORANGE_GPIO_Port, ORANGE_Pin);
+        HAL_UART_Transmit(&huart3, (uint8_t *)"ORANGE is switched\r\n", 20, 10);
+        if (HAL_GPIO_ReadPin(ORANGE_GPIO_Port, ORANGE_Pin)==GPIO_PIN_SET)
+          {HAL_UART_Transmit(&huart3, (uint8_t *)"ORANGE is ON\r\n", 14, 10);}
+        else {HAL_UART_Transmit(&huart3, (uint8_t *)"ORANGE is OFF\r\n", 15, 10);}
+        break;
+	case RED:
+        HAL_GPIO_TogglePin(RED_GPIO_Port, RED_Pin);
+        HAL_UART_Transmit(&huart3, (uint8_t *)"RED is switched\r\n", 17, 10);
+        if (HAL_GPIO_ReadPin(RED_GPIO_Port, RED_Pin)==GPIO_PIN_SET)
+          {HAL_UART_Transmit(&huart3, (uint8_t *)"RED is ON\r\n", 11, 10);}
+        else {HAL_UART_Transmit(&huart3, (uint8_t *)"RED is OFF\r\n", 12, 10);}
+        break;
+	case BLUE:
+        HAL_GPIO_TogglePin(BLUE_GPIO_Port, BLUE_Pin);
+        HAL_UART_Transmit(&huart3, (uint8_t *)"BLUE is switched\r\n", 18, 10);
+        if (HAL_GPIO_ReadPin(BLUE_GPIO_Port, BLUE_Pin)==GPIO_PIN_SET)
+          {HAL_UART_Transmit(&huart3, (uint8_t *)"BLUE is ON\r\n", 12, 10);}
+        else {HAL_UART_Transmit(&huart3, (uint8_t *)"BLUE is OFF\r\n", 13, 10);}
+        break;
+	default:
+        HAL_UART_Transmit(&huart3, (uint8_t *)"Hey, programmer, you made a mistake!\r\n", 38, 10);
+        break;
+	}
+}
+
+
 void PollUart(void)
 {
 	uint8_t ReceiveBuffer[1]={0};
@@ -23,35 +63,19 @@ void PollUart(void)
           {
             case 'R':
             case 'r':
-              HAL_GPIO_TogglePin(RED_GPIO_Port, RED_Pin);
-              HAL_UART_Transmit(&huart3, (uint8_t *)"RED is switched\r\n", 17, 10);
-              if (HAL_GPIO_ReadPin(RED_GPIO_Port, RED_Pin)==GPIO_PIN_SET)
-                {HAL_UART_Transmit(&huart3, (uint8_t *)"RED is ON\r\n", 11, 10);}
-              else {HAL_UART_Transmit(&huart3, (uint8_t *)"RED is OFF\r\n", 12, 10);}
+              UartSendMessageTogglePin(RED);
               break;
             case 'G':
             case 'g':
-              HAL_GPIO_TogglePin(GREEN_GPIO_Port, GREEN_Pin);
-              HAL_UART_Transmit(&huart3, (uint8_t *)"GREEN is switched\r\n", 19, 10);
-              if (HAL_GPIO_ReadPin(GREEN_GPIO_Port, GREEN_Pin)==GPIO_PIN_SET)
-                {HAL_UART_Transmit(&huart3, (uint8_t *)"GREEN is ON\r\n", 13, 10);}
-              else {HAL_UART_Transmit(&huart3, (uint8_t *)"GREEN is OFF\r\n", 14, 10);}
+              UartSendMessageTogglePin(GREEN);
               break;
             case 'B':
             case 'b':
-              HAL_GPIO_TogglePin(BLUE_GPIO_Port, BLUE_Pin);
-              HAL_UART_Transmit(&huart3, (uint8_t *)"BLUE is switched\r\n", 18, 10);
-              if (HAL_GPIO_ReadPin(BLUE_GPIO_Port, BLUE_Pin)==GPIO_PIN_SET)
-                {HAL_UART_Transmit(&huart3, (uint8_t *)"BLUE is ON\r\n", 12, 10);}
-              else {HAL_UART_Transmit(&huart3, (uint8_t *)"BLUE is OFF\r\n", 13, 10);}
+              UartSendMessageTogglePin(BLUE);
               break;
             case 'O':
             case 'o':
-              HAL_GPIO_TogglePin(ORANGE_GPIO_Port, ORANGE_Pin);
-              HAL_UART_Transmit(&huart3, (uint8_t *)"ORANGE is switched\r\n", 20, 10);
-              if (HAL_GPIO_ReadPin(ORANGE_GPIO_Port, ORANGE_Pin)==GPIO_PIN_SET)
-                {HAL_UART_Transmit(&huart3, (uint8_t *)"ORANGE is ON\r\n", 14, 10);}
-              else {HAL_UART_Transmit(&huart3, (uint8_t *)"ORANGE is OFF\r\n", 15, 10);}
+              UartSendMessageTogglePin(ORANGE);
               break;
             case '\r':
             case '\n':
@@ -102,10 +126,10 @@ void PollButtons(void)
 		TimeCounter=HAL_GetTick();
 	}
 
-	if (pvButtonState->SWT1==1) {ButtonsAntiJitter();HAL_GPIO_TogglePin(BLUE_GPIO_Port, BLUE_Pin); pvButtonState->SWT1=0;}
-	if (pvButtonState->SWT3==1) {ButtonsAntiJitter();HAL_GPIO_TogglePin(ORANGE_GPIO_Port, ORANGE_Pin); pvButtonState->SWT3=0;}
-	if (pvButtonState->SWT4==1) {ButtonsAntiJitter();HAL_GPIO_TogglePin(RED_GPIO_Port, RED_Pin); pvButtonState->SWT4=0;}
-	if (pvButtonState->SWT5==1) {ButtonsAntiJitter();HAL_GPIO_TogglePin(GREEN_GPIO_Port, GREEN_Pin); pvButtonState->SWT5=0;}
+	if (pvButtonState->SWT1==1) {ButtonsAntiJitter();UartSendMessageTogglePin(BLUE); pvButtonState->SWT1=0;}
+	if (pvButtonState->SWT3==1) {ButtonsAntiJitter();UartSendMessageTogglePin(ORANGE); pvButtonState->SWT3=0;}
+	if (pvButtonState->SWT4==1) {ButtonsAntiJitter();UartSendMessageTogglePin(RED); pvButtonState->SWT4=0;}
+	if (pvButtonState->SWT5==1) {ButtonsAntiJitter();UartSendMessageTogglePin(GREEN); pvButtonState->SWT5=0;}
 }
 
 

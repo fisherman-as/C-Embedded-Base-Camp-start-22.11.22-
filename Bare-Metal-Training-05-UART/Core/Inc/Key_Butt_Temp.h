@@ -10,6 +10,8 @@
 
 #include "main.h"
 
+typedef enum {GREEN, ORANGE, RED, BLUE}COLOR;
+
 typedef struct
 	{
 	  uint32_t SWT1:1;

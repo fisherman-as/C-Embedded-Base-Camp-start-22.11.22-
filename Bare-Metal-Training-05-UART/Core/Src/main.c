@@ -105,7 +105,7 @@ int main(void)
   while (1)
   {
 
-	 // PollUart();
+	  PollUart();
 	  PollButtons();
 
 
