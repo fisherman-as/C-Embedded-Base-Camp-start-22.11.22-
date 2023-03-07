@@ -6,7 +6,7 @@
  */
 #include <Key_Butt_Temp.h>
 #include <stdio.h>
-#include <string.h>
+//#include <string.h>
 
 extern UART_HandleTypeDef huart3;
 extern ADC_HandleTypeDef hadc1;
@@ -142,15 +142,70 @@ void HandleExtTempChannel()
 	//HAL_ADC_PollForConversion(&hadc1, 100);
 	//uint16_t ADCValue=HAL_ADC_GetValue(&hadc1);
 	float Voltage=(float)(AdcData[0])*3.3/4096;
-	float Temperature= (float)(101-50*Voltage);
-
-	  uint8_t buffer[10];
-	  sprintf(buffer, "%d", (uint16_t)Temperature);
+	uint32_t Temperature= (uint32_t)(101-50*Voltage);
+	//uint8_t buffer[10];
+	//sprintf(buffer, "%d", (uint16_t)Temperature);
 
 	HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), 10);
 	HAL_UART_Transmit(&huart3, (uint8_t *)"\r\n", 2, 10);
 	HAL_Delay(1000);
 
 }
+
+
+
+
+//--------------------------------------------------------------------------------------------------------------------struct divmod10_t
+struct divmod10_t
+{
+    uint32_t quot;
+    uint8_t rem;
+};
+inline static divmod10_t divmodu10(uint32_t n)
+{
+    divmod10_t res;
+// умножаем на 0.8
+    res.quot = n >> 1;
+    res.quot += res.quot >> 1;
+    res.quot += res.quot >> 4;
+    res.quot += res.quot >> 8;
+    res.quot += res.quot >> 16;
+    uint32_t qq = res.quot;
+// делим на 8
+    res.quot >>= 3;
+// вычисляем остаток
+    res.rem = uint8_t(n - ((res.quot << 1) + (qq & ~7ul)));
+// корректируем остаток и частное
+    if(res.rem > 9)
+    {
+        res.rem -= 10;
+        res.quot++;
+    }
+    return res;
+}
+
+char * utoa_fast_div(uint32_t value, char *buffer)
+{
+    buffer += 11;
+    *--buffer = 0;
+    do
+    {
+        divmod10_t res = divmodu10(value);
+        *--buffer = res.rem + '0';
+        value = res.quot;
+    }
+    while (value != 0);
+    return buffer;
+}
+
+
+
+
+
+
+
+
+
+
 
 
