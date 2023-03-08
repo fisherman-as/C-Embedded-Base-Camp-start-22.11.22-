@@ -6,14 +6,16 @@
  */
 #include <Key_Butt_Temp.h>
 #include <stdio.h>
-//#include <string.h>
+#include <string.h>
 
 extern UART_HandleTypeDef huart3;
 extern ADC_HandleTypeDef hadc1;
 BUTTONFLAG ButtonState={0};
 BUTTONFLAG* pvButtonState=&ButtonState;
-volatile uint32_t JitterCounter=0;
-uint16_t AdcData[1]={0};
+volatile uint32_t JitterCounter=0;        //Is used to prevent false signals from the buttons (in SysTick Handler).
+uint16_t AdcData[1]={0};                  //Here ve save the result of ADC conversion
+uint32_t AdcDmaFlag=0;                    //Is used to show that the data is already saved
+uint32_t TemperatureCounter=0;            //Is used for counting 5s for the temperature measurement
 
 void UartSendMessageTogglePin(COLOR color)
 {
@@ -53,7 +55,6 @@ void UartSendMessageTogglePin(COLOR color)
 	}
 }
 
-
 void PollUart(void)
 {
 	uint8_t ReceiveBuffer[1]={0};
@@ -85,8 +86,8 @@ void PollUart(void)
             default:
               HAL_UART_Transmit(&huart3, (uint8_t *)"Unknown command, you should use R, G, B, O, r, g, b, o only\r\n", 61, 10);
               break;
-	  			}
-	  		}
+            }
+	  }
     //else if (status==HAL_ERROR||status==HAL_BUSY||status==HAL_TIMEOUT)
       //{HAL_UART_Transmit(&huart3, (uint8_t *)"Something went wrong during receiving\r\n", 39, 10);}
 
@@ -102,12 +103,12 @@ void ButtonsAntiJitter(void)
 void PollButtons(void)
 {
 	static uint32_t TimeCounter=0;
-	if (TimeCounter+100<HAL_GetTick()) //poll buttons every ~100ms
+	if (TimeCounter+100<HAL_GetTick()||TimeCounter-HAL_GetTick()>100) //poll buttons every ~100ms
 	{
 		if (pvButtonState->ButtonsPollIsDenied==1)
 		{
 			pvButtonState->JitterIsBlocking=1;
-			if (JitterCounter>200)
+			if (JitterCounter>200) //button poll is denied for ~200ms
 			  {
 				pvButtonState->ButtonsPollIsDenied=0;
 				JitterCounter=0;
@@ -135,77 +136,25 @@ void PollButtons(void)
 	if (pvButtonState->SWT5==1) {ButtonsAntiJitter();UartSendMessageTogglePin(GREEN); pvButtonState->SWT5=0;}
 }
 
-
 void HandleExtTempChannel()
 {
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) AdcData, 1);
-	//HAL_ADC_PollForConversion(&hadc1, 100);
-	//uint16_t ADCValue=HAL_ADC_GetValue(&hadc1);
-	float Voltage=(float)(AdcData[0])*3.3/4096;
-	uint32_t Temperature= (uint32_t)(101-50*Voltage);
-	//uint8_t buffer[10];
-	//sprintf(buffer, "%d", (uint16_t)Temperature);
-
-	HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), 10);
-	HAL_UART_Transmit(&huart3, (uint8_t *)"\r\n", 2, 10);
-	HAL_Delay(1000);
-
+	if (TemperatureCounter>5000)
+	{
+	  HAL_ADC_Start_DMA(&hadc1, (uint32_t*) AdcData, 1);
+	  if (AdcDmaFlag==1)
+	  {
+	    float Voltage=(float)(AdcData[0])*3.3/4096;
+	    uint32_t Temperature=(uint32_t)(101-50*Voltage);
+	    uint8_t buffer[10];
+	    sprintf(buffer, "%d", (uint16_t)Temperature);
+	      //I have used 'sprintf' because it's the fastest way...
+	      //...to implement conversion of uint32_t to uint8_t
+	    HAL_UART_Transmit(&huart3, (uint8_t *)"The current Temperature = ", 26, 10);
+	    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), 10);
+	    HAL_UART_Transmit(&huart3, (uint8_t *)" C", 2, 10);
+	    HAL_UART_Transmit(&huart3, (uint8_t *)"\r\n", 2, 10);
+	    AdcDmaFlag=0;
+	  }
+	TemperatureCounter=0;
+	}
 }
-
-
-
-
-//--------------------------------------------------------------------------------------------------------------------struct divmod10_t
-struct divmod10_t
-{
-    uint32_t quot;
-    uint8_t rem;
-};
-inline static divmod10_t divmodu10(uint32_t n)
-{
-    divmod10_t res;
-// умножаем на 0.8
-    res.quot = n >> 1;
-    res.quot += res.quot >> 1;
-    res.quot += res.quot >> 4;
-    res.quot += res.quot >> 8;
-    res.quot += res.quot >> 16;
-    uint32_t qq = res.quot;
-// делим на 8
-    res.quot >>= 3;
-// вычисляем остаток
-    res.rem = uint8_t(n - ((res.quot << 1) + (qq & ~7ul)));
-// корректируем остаток и частное
-    if(res.rem > 9)
-    {
-        res.rem -= 10;
-        res.quot++;
-    }
-    return res;
-}
-
-char * utoa_fast_div(uint32_t value, char *buffer)
-{
-    buffer += 11;
-    *--buffer = 0;
-    do
-    {
-        divmod10_t res = divmodu10(value);
-        *--buffer = res.rem + '0';
-        value = res.quot;
-    }
-    while (value != 0);
-    return buffer;
-}
-
-
-
-
-
-
-
-
-
-
-
-

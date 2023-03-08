@@ -45,7 +45,6 @@ DMA_HandleTypeDef hdma_adc1;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-uint32_t AdcDmaFlag=0;
 
 /* USER CODE END PV */
 
@@ -104,13 +103,9 @@ int main(void)
 
   while (1)
   {
-
-	  //PollUart();
-	  //PollButtons();
+	  PollUart();
+	  PollButtons();
 	  HandleExtTempChannel();
-
-
-     //HAL_Delay(1000);
 
     /* USER CODE END WHILE */
 

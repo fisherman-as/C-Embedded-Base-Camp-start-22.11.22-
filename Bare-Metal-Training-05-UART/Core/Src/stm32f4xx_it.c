@@ -187,8 +187,10 @@ void SysTick_Handler(void)
 
 	/*----------------------------------------------------------*/
 	extern volatile uint32_t JitterCounter;
+	extern uint32_t TemperatureCounter;
 	if (pvButtonState->JitterIsBlocking==1)
 	{JitterCounter++;}
+	TemperatureCounter++;
 	/*----------------------------------------------------------*/
 
   /* USER CODE END SysTick_IRQn 0 */
@@ -213,7 +215,7 @@ void DMA2_Stream0_IRQHandler(void)
   /* USER CODE BEGIN DMA2_Stream0_IRQn 0 */
 
 	/*----------------------------------------------------------*/
-	extern uint32_t AdcDmaFlag;
+	extern uint32_t AdcDmaFlag; //is used to show that the data is already saved
 	AdcDmaFlag=1;
 	/*----------------------------------------------------------*/
 
