@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "SPI_func.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -94,8 +94,84 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  HAL_Delay(100);
+  //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
+  // CS = HIGH
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
+  HAL_Delay(100);
+
+  // Prepare Transmit ans Recevive Arrays
+  uint8_t TransmitArray[1000] = { 0 };
+  uint8_t ReceiveArray[1000]  = { 0 };
+
+  // Prepare READ-ID command
+  uint32_t words = 40;
+
+//  unsigned int cnt = 0;
   while (1)
   {
+	  //for (uint32_t i=0; i<10;i++)
+	  {
+  TransmitArray[0] = 0x03;
+  TransmitArray[1] = 0x00;
+  TransmitArray[2] = 0x00;
+  TransmitArray[3] = 0x00;
+	    // CS = LOW
+  	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_RESET);
+	    // Exchange data
+  	  HAL_SPI_TransmitReceive(&hspi1, TransmitArray, ReceiveArray, 8*words, 100);
+	    // CS = HIGH
+ // 	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
+ 	  //HAL_Delay(7000);
+
+
+  	  TransmitArray[0] = 0x03;
+  	  TransmitArray[1] = 0x00;
+  	  TransmitArray[2] = 0x10;
+  	  TransmitArray[3] = 0x00;
+  		    // CS = LOW
+//  	  	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_RESET);
+  		    // Exchange data
+  	  	  HAL_SPI_TransmitReceive(&hspi1, TransmitArray, ReceiveArray, 8*words, 100);
+  		    // CS = HIGH
+  	  	//  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
+  	  	  HAL_Delay(1);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	   // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+	 // read_all_pages();
+	 // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+	  //HAL_Delay(3000);
+	  }
+
+
+
+
+
+
+
+
+
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -171,7 +247,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
