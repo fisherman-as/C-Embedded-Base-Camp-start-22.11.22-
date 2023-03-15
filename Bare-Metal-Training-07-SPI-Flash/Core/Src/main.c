@@ -100,50 +100,30 @@ int main(void)
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
   HAL_Delay(100);
 
-  // Prepare Transmit ans Recevive Arrays
-  uint8_t TransmitArray[1000] = { 0 };
-  uint8_t ReceiveArray[1000]  = { 0 };
+  // Prepare Transmit and Receive Arrays
+  uint8_t TransmitArray[4800] = { 0 };
+  uint8_t ReceiveArray[4800]  = { 0 };
 
   // Prepare READ-ID command
-  uint32_t words = 40;
+  uint32_t words = 10;
 
-//  unsigned int cnt = 0;
+
   while (1)
   {
-	  //for (uint32_t i=0; i<10;i++)
+	  for (uint32_t i=0; i<16;i++)
 	  {
-  TransmitArray[0] = 0x03;
-  TransmitArray[1] = 0x00;
-  TransmitArray[2] = 0x00;
-  TransmitArray[3] = 0x00;
-	    // CS = LOW
-  	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_RESET);
-	    // Exchange data
-  	  HAL_SPI_TransmitReceive(&hspi1, TransmitArray, ReceiveArray, 8*words, 100);
-	    // CS = HIGH
- // 	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
- 	  //HAL_Delay(7000);
+		  TransmitArray[0] = 0x03;
+		  TransmitArray[1] = 0x00;
+		  TransmitArray[2] = (uint8_t)(i<<4);
+		  TransmitArray[3] = 0x00;
+
+		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_RESET);
+		  HAL_SPI_TransmitReceive(&hspi1, TransmitArray, ReceiveArray, 8*words, 100);
+		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
+	  }
 
 
-  	  TransmitArray[0] = 0x03;
-  	  TransmitArray[1] = 0x00;
-  	  TransmitArray[2] = 0x10;
-  	  TransmitArray[3] = 0x00;
-  		    // CS = LOW
-//  	  	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_RESET);
-  		    // Exchange data
-  	  	  HAL_SPI_TransmitReceive(&hspi1, TransmitArray, ReceiveArray, 8*words, 100);
-  		    // CS = HIGH
-  	  	//  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
-  	  	  HAL_Delay(1);
-
-
-
-
-
-
-
-
+HAL_Delay(4000);
 
 
 
@@ -160,12 +140,6 @@ int main(void)
 	 // read_all_pages();
 	 // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 	  //HAL_Delay(3000);
-	  }
-
-
-
-
-
 
 
 
@@ -244,7 +218,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.Mode = SPI_MODE_MASTER;
   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
   hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
   hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
