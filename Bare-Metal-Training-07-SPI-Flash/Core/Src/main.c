@@ -95,56 +95,40 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   HAL_Delay(100);
-  //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
-  // CS = HIGH
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
-  HAL_Delay(100);
-
   // Prepare Transmit and Receive Arrays
   uint8_t TransmitArray[4800] = { 0 };
   uint8_t ReceiveArray[4800]  = { 0 };
 
-  // Prepare READ-ID command
-  uint32_t words = 10;
+/*
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_RESET);
+uint8_t data[]="My name is AS";
+TransmitArray[0]=0x02;
+TransmitArray[1]=0x01;
+TransmitArray[2]=0x30;
+TransmitArray[3]=0x00;
+HAL_SPI_Transmit(&hspi1, TransmitArray, 4, 100);
+HAL_SPI_Transmit(&hspi1, data, 15, 100);
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
+HAL_Delay(100);
+*/
+EraseChip();
+  WriteStatusRegister(0x00);
+  WriteEnable();
+  uint8_t data[]="My name is AS";
+  ByteProgram(0x000000, data, 1);
+  HAL_Delay(100);
+
 
 
   while (1)
   {
-	  for (uint32_t i=0; i<16;i++)
-	  {
-		  TransmitArray[0] = 0x03;
-		  TransmitArray[1] = 0x00;
-		  TransmitArray[2] = (uint8_t)(i<<4);
-		  TransmitArray[3] = 0x00;
+	  ReadSPI_16(ReceiveArray, 80);
 
-		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_RESET);
-		  HAL_SPI_TransmitReceive(&hspi1, TransmitArray, ReceiveArray, 8*words, 100);
-		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
-	  }
-
-
-HAL_Delay(4000);
+//ReadStatusRegister(ReceiveArray);
 
 
 
-
-
-
-
-
-
-
-
-
-	   // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-	 // read_all_pages();
-	 // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-	  //HAL_Delay(3000);
-
-
-
-
-
+HAL_Delay(500);
 
     /* USER CODE END WHILE */
 
