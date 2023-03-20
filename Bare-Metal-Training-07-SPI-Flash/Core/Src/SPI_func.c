@@ -283,11 +283,13 @@ void WriteStatusRegister(uint8_t NewStateOfStatusRegister)
 /*------------------------------Functions for my homework---------------------------------------------*/
 
 
-
-void ReadSPI_20(uint8_t* pvRxData, uint16_t Size) //the function for reading the first <Size> bytes in 20 blocks of memory
+//the function for reading the first <cols> bytes in <rows> (20) blocks of memory
+void ReadSPI_20(uint16_t rows, uint16_t cols, uint8_t (*pvRxData)[cols])
 {
+  uint8_t ReceiveArray[4096]={0}; //4096 = page size
   uint8_t TransmitArray[80]={0};
-  for (uint32_t i=0; i<20;i++)
+  if (rows>20) {rows=20;}
+  for (uint32_t i=0; i<rows;i++)
   {
 	  TransmitArray[0] = 0x03;
 	  TransmitArray[1] = (uint8_t)(i>>4);
@@ -295,12 +297,22 @@ void ReadSPI_20(uint8_t* pvRxData, uint16_t Size) //the function for reading the
 	  TransmitArray[3] = 0x00;
 
 	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_RESET);
-	  HAL_SPI_TransmitReceive(&hspi1, TransmitArray, pvRxData, Size, 100);
+	  HAL_SPI_TransmitReceive(&hspi1, TransmitArray, ReceiveArray, cols, 100);
+	  /*
+	   * I could write data into pvRxData directly, but in this case I would have to delete
+	   * first 4 symbols 0xFF there, so I decided to do it in this function
+	  */
 	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
+
+	  for (uint32_t j=0; j<cols; j++)
+	  {
+		  //write received data into the dedicated array pvRxData; +4 because we need to delete first 4 0xFF
+		  pvRxData[i][j]=ReceiveArray[j+4];
+	  }
   }
 }
 
-void WriteMyTextToFlash(uint8_t* pvWriteArray)
+void WriteMyTextToFlash(const uint8_t* pvWriteArray)
 {
 	/*-------Here we break pvWriteArray into 20 different strings and write each string into the flash--------------*/
 	uint8_t* String[20];
@@ -313,7 +325,7 @@ void WriteMyTextToFlash(uint8_t* pvWriteArray)
 	  /*---Write String into the flash---*/
 	  uint32_t WriteAdress=0;
 	  WriteAdress|=number<<12; //address of the page to write (0x0XX000, XX = 00h-13h)
-	  WordProgramAAI_HW(WriteAdress, String[number], strlen(String[number])); //write a string into the flash
+	  WordProgramAAI_HW(WriteAdress, String[number], strlen((char*)String[number])); //write a string into the flash
 	  number++;
 	}
 }

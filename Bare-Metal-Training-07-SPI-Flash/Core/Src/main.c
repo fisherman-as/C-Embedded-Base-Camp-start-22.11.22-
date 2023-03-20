@@ -97,8 +97,8 @@ int main(void)
   HAL_Delay(100);
 
   // Prepare Transmit and Receive Arrays
-  uint8_t ReceiveArray[4800]  = { 0 };
-  uint8_t TransmitArray[]="From: Aleksey Yabanzhi, fisherman-as@ukr.net\n\r\
+  uint8_t ReceiveArray[20][300]  = { 0 };
+  const uint8_t TransmitArray[]="From: Aleksey Yabanzhi, fisherman-as@ukr.net\n\r\
 Mentor: Artem Dovhal, artem.dovhal@globallogic.com\n\r\
 Date: 20.03.2023\n\r\
 TIME CAPSULE\n\r\
@@ -124,7 +124,7 @@ I like this courses, they gave me some practice and experience.\n\r";
 
   while (1)
   {
-    ReadSPI_20(ReceiveArray, 1500); //read ReceiveArray from the flash
+    ReadSPI_20(20, 300, ReceiveArray); //read data from the flash and write it into ReceiveArray
     HAL_Delay(500);
 
     /* USER CODE END WHILE */

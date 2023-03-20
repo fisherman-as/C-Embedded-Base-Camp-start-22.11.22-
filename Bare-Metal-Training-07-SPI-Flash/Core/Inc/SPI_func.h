@@ -29,7 +29,7 @@ void ReadStatusRegister(uint8_t* ReceiveArray);				//tested
 void WriteEnable(void);										//tested
 void WriteDisable(void);									//
 void WriteStatusRegister(uint8_t NewStateOfStatusRegister);	//tested, with 0x00
-void ReadSPI_20(uint8_t* pvRxData, uint16_t Size);			//tested
-void WriteMyTextToFlash(uint8_t* pvWriteArray);
+void ReadSPI_20(uint16_t rows, uint16_t cols, uint8_t (*pvRxData)[]);			//tested
+void WriteMyTextToFlash(const uint8_t* pvWriteArray);
 
 #endif /* INC_SPI_FUNC_H_ */
