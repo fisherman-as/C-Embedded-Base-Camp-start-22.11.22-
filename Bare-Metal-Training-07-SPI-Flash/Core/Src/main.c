@@ -95,40 +95,38 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   HAL_Delay(100);
+
+  EraseChip();
+
   // Prepare Transmit and Receive Arrays
-  uint8_t TransmitArray[4800] = { 0 };
   uint8_t ReceiveArray[4800]  = { 0 };
+  uint8_t TransmitArray[]="From: Aleksey Yabanzhi, fisherman-as@ukr.net\n\r\
+Mentor: Artem Dovhal, artem.dovhal@globallogic.com\n\r\
+Date: 20.03.2023\n\r\
+TIME CAPSULE\n\r\
+To be or not to be - Shakespeare\n\r\
+The greatest glory in living lies not in never falling, \n\r\
+but in rising every time we fall. -Nelson Mandela\n\r\
+The way to get started is to quit talking and begin doing. -Walt Disney\n\r\
+Your time is limited, so don't waste it living someone else's life. \n\r\
+Don't be trapped by dogma, which is living with the results of other people's thinking. -Steve Jobs\n\r\
+If life were predictable it would cease to be life, and be without flavor. -Eleanor Roosevelt\n\r\
+If you look at what you have in life, you'll always have more. \n\r\
+If you look at what you don't have in life, you'll never have enough. -Oprah Winfrey\n\r\
+If you set your goals ridiculously high and it's a failure, \n\r\
+you will fail above everyone else's success. -James Cameron\n\r\
+Life is what happens when you're busy making other plans. -John Lennon\n\r\
+So, if you have read this text to this point, you can view my thoughts here.\n\r\
+I think we'll prevail. Hope it happens until 13.08.2023. However the more real date is \n\r\
+the summer of 2025's. If I'm not in the army yet, you can write me a mail:).\n\r\
+I like this courses, they gave me some practice and experience.\n\r";
 
-/*
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_RESET);
-uint8_t data[]="My name is AS";
-TransmitArray[0]=0x02;
-TransmitArray[1]=0x01;
-TransmitArray[2]=0x30;
-TransmitArray[3]=0x00;
-HAL_SPI_Transmit(&hspi1, TransmitArray, 4, 100);
-HAL_SPI_Transmit(&hspi1, data, 15, 100);
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET);
-HAL_Delay(100);
-*/
-EraseChip();
-  WriteStatusRegister(0x00);
-  WriteEnable();
-  uint8_t data[]="My name is AS";
-  ByteProgram(0x000000, data, 1);
-  HAL_Delay(100);
-
-
+  WriteMyTextToFlash(TransmitArray); //write ReceiveArray into the flash
 
   while (1)
   {
-	  ReadSPI_16(ReceiveArray, 80);
-
-//ReadStatusRegister(ReceiveArray);
-
-
-
-HAL_Delay(500);
+    ReadSPI_20(ReceiveArray, 1500); //read ReceiveArray from the flash
+    HAL_Delay(500);
 
     /* USER CODE END WHILE */
 

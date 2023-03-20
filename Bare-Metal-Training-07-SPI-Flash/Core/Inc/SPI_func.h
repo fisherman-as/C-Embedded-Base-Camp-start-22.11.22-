@@ -11,24 +11,25 @@
 
 typedef enum {OFF, ON}STATE;
 
-void EnableChip(STATE state);													//
-void Read25(uint32_t ReadAdress, uint8_t* pvReceiveArray, uint16_t Size);		//tested
-void ByteProgram(uint32_t WriteAdress, uint8_t* pvWriteArray, uint16_t Size);	//
-void Erase4(uint32_t WriteAdress);												//
-void Erase32(uint32_t WriteAdress);												//
-void Erase64(uint32_t WriteAdress);												//
-void EraseChip(void);															//
-void ReadStatusRegister(uint8_t* ReceiveArray);									//tested
-void WriteEnable(void);															//tested
-void WriteDisable(void);														//
-void WriteStatusRegister(uint8_t NewStateOfStatusRegister);						//tested, with 0x00
-
-
-
-
-void ReadSPI_16(uint8_t* pvRxData, uint16_t Size);
-
-void read_data(uint32_t address, uint8_t *data, uint32_t size);
-void read_all_pages();
+void EnableChip(STATE state);								//
+void Read25(uint32_t ReadAdress,
+		uint8_t* pvReceiveArray, uint16_t Size);			//tested
+void ByteProgram(uint32_t WriteAdress,
+		uint8_t* pvWriteArray);								//tested //writes 1 byte only
+void EBSY(void);
+void DBSY(void);
+void RDSR(void);
+void WordProgramAAI_HW(uint32_t WriteAdress,
+		uint8_t* pvWriteArray, uint16_t Size); 				//tested
+void Erase4(uint32_t WriteAdress);							//+
+void Erase32(uint32_t WriteAdress);							//+
+void Erase64(uint32_t WriteAdress);							//+
+void EraseChip(void);										//tested
+void ReadStatusRegister(uint8_t* ReceiveArray);				//tested
+void WriteEnable(void);										//tested
+void WriteDisable(void);									//
+void WriteStatusRegister(uint8_t NewStateOfStatusRegister);	//tested, with 0x00
+void ReadSPI_20(uint8_t* pvRxData, uint16_t Size);			//tested
+void WriteMyTextToFlash(uint8_t* pvWriteArray);
 
 #endif /* INC_SPI_FUNC_H_ */
