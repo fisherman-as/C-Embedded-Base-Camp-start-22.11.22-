@@ -96,8 +96,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   HAL_Delay(100);
 
-  EraseChip();
-
   // Prepare Transmit and Receive Arrays
   uint8_t ReceiveArray[4800]  = { 0 };
   uint8_t TransmitArray[]="From: Aleksey Yabanzhi, fisherman-as@ukr.net\n\r\
@@ -121,6 +119,7 @@ I think we'll prevail. Hope it happens until 13.08.2023. However the more real d
 the summer of 2025's. If I'm not in the army yet, you can write me a mail:).\n\r\
 I like this courses, they gave me some practice and experience.\n\r";
 
+  EraseChip();
   WriteMyTextToFlash(TransmitArray); //write ReceiveArray into the flash
 
   while (1)
