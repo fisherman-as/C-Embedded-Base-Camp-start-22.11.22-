@@ -129,8 +129,6 @@ int main(void)
   leds[3].period=2000;
   leds[3].pLedHandle=LedHandle;
 
-//SysTick_Config(SystemCoreClock/1000); //1000 interrupts per second, one interrupt every 1ms
-
   while (1)
   {
     while(tempcnt==counter){}
