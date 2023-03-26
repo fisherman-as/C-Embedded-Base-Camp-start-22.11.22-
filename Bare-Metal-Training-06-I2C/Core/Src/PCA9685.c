@@ -304,42 +304,9 @@ if (ReceiveDataIsComplete==1)
   HAL_Delay(100); //we need this delay for correct working of this function
 }
 
-void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
-{
-	/*
-  if (huart == &huart3)
-  {
-	  ReceiveDataHalfIsComplete=1;
-  }
-  */
-}
-
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	ReceiveDataIsComplete=1;
-
-
-	/*  //this code is for interrupts only
-  if (huart == &huart3)
-  {
-    if (ReceiveDataIsComplete==0)
-    {
-      UartReceiveBuffer[UartReceiveBufferIndex] = huart->Instance->DR;
-      UartReceiveBufferIndex++;
-      if (UartReceiveBufferIndex>=COMMANDLENGTH)
-        {
-          UartReceiveBufferIndex = 0;
-        }
-      if (UartReceiveBuffer[UartReceiveBufferIndex-1]=='\n' || UartReceiveBuffer[UartReceiveBufferIndex-1]=='\r')
-        {
-        	ReceiveDataIsComplete=1;
-        	UartReceiveBufferIndex = 0;
-        }
-      HAL_UART_Receive_IT(&huart3, &UartReceiveBuffer[UartReceiveBufferIndex], 1);
-    }
-  }
-  */
-
 }
 
 

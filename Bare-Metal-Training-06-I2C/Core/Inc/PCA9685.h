@@ -40,7 +40,6 @@ void PCA9685_SetFrequency(uint32_t frequency);
 void PollUart(void);
 void HandleUartData(void);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart);
 
 /*-----------------------------------------The description of User API------------------------------------------------*/
 /*
