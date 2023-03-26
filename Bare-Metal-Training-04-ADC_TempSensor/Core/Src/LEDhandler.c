@@ -10,7 +10,7 @@
 #define TMR4FREQUENCY 400000
 #define SENSORQUANTITY 3 //up to 4
 
-extern PWM TIMERSETTINGS;   //this structure contains PWM settings (now - default)
+extern PWM TIMERSETTINGS;   //this structure contains PWM settings
 extern PWM* pTIMERSETTINGS; //pointer
 EMERGENCY_FLAG EMERGENCY={0};
 EMERGENCY_FLAG* pEMERGENCY=&EMERGENCY;

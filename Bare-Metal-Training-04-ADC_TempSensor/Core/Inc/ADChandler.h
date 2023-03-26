@@ -16,4 +16,7 @@ void HandleVoltageChannel(PWM*);
 void HandleExtTempChannel(PWM*);
 void HandleIntTempChannel(PWM*);
 void HandleAdcChannels(PWM*);
+
+extern void HandleLedRedBlinkAlert(EMERGENCY_FLAG*);
+
 #endif /* SRC_ADCHANDLER_H_ */

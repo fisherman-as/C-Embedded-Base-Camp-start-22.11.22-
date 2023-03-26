@@ -33,10 +33,10 @@ void HandleIntTempChannel(PWM* pTIMERSETTINGS)
 	//  0.71V -> 5C
 	//	0.76V -> 25C
 	//  0.86V -> 65C (25+40)
-	//  0.885V -> 75C - it will be threshold for red blinking
+	//  0.885V -> 75C - it will be the threshold for red blinking
 	//  0.96V -> 105C
 	// So, we can imagine that voltage will be changed from 0.71V (880) to 0.96V (1200) in general(5C - 105C)
-	//However, for the best result presenting, let's indicate  the range from ~25C to 105C only
+	// However, for the best result presenting, let's indicate  the range from ~25C to 105C only
 	// Therefore, the ADC will give us the values from 1050 to 1200, threshold is ~1100
 	// So, the DutyCycle will be 0% at temp=1050 and 100% at temp=1200
 	// So, the formula is following: DutyCycle = (2*temp/3 - 700)
