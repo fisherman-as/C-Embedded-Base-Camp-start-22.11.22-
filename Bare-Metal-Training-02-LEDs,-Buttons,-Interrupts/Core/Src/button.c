@@ -86,18 +86,20 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void ButtonsHandler(void)
 {
-switch (SW45Flag)
-{
-  case 0:
+  switch (SW45Flag)
+  {
+    case 0:
 	  Scheme1();
-	break;
-  case 1:
+	  break;
+    case 1:
 	  Scheme2();
-	break;
-  case 2:
+	  break;
+    case 2:
 	  Scheme3();
-	break;
-}
+	  break;
+    default:
+	  break;
+  }
 }
 
 

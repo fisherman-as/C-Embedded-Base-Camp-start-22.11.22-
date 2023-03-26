@@ -16,7 +16,7 @@
       GPIO_TypeDef * port;  //LED port
       uint16_t pin;         //LED pin
       uint32_t startpoint;  //offset from startpoint of blinking
-      uint32_t DutyCycle;   //the part of period when a LED is "on"
+      uint32_t DutyCycle;   //the part of period when a LED is "ON"
       uint32_t period;      //period
       void (*pLedHandle)(uint32_t color);//the pointer to function that handles this LED blinking
     }LED;

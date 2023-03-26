@@ -39,14 +39,11 @@ void Scheme2(void)
 			        else
 			           {}
 		          }
-
 }
 void Scheme3(void)
 {
 	if (counter%3==0)
 	{
-
-
 	    for (uint32_t n=0; n<LED_QUANTITY; n+=2)
 		      {
 			        if ((((counter+leds[n].period+leds[n].DutyCycle)%leds[n].period==0)||  \
@@ -55,7 +52,7 @@ void Scheme3(void)
 		               {leds[n].pLedHandle(leds[n].color);}
 			        else
 			           {}
-		          }
+		      }
 	}
 	else
 	{
@@ -67,19 +64,16 @@ void Scheme3(void)
 		               {leds[n].pLedHandle(leds[n].color);}
 			        else
 			           {}
-		          }
-
+		      }
 	}
-
 }
 
   void LedHandle( uint32_t color)
     {
 	  for (uint32_t n=0; n<LED_QUANTITY; n++)
 	    {
-	      if (color==leds[n].color){LedFlags[n]=1;}
+	      if (color==leds[n].color) {LedFlags[n]=1;}
 	    }
-	 // HAL_GPIO_TogglePin(port, pin);
     }
 
 
