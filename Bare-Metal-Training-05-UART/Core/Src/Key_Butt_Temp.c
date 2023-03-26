@@ -13,8 +13,8 @@ extern ADC_HandleTypeDef hadc1;
 BUTTONFLAG ButtonState={0};
 BUTTONFLAG* pvButtonState=&ButtonState;
 volatile uint32_t JitterCounter=0;        //Is used to prevent false signals from the buttons (in SysTick Handler).
-uint16_t AdcData[1]={0};                  //Here ve save the result of ADC conversion
-uint32_t AdcDmaFlag=0;                    //Is used to show that the data is already saved
+uint16_t AdcData[1]={0};                  //Here we save the result of ADC conversion
+volatile uint32_t AdcDmaFlag=0;                    //Is used to show that the data is already saved
 uint32_t TemperatureCounter=0;            //Is used for counting 5s for the temperature measurement
 
 void UartSendMessageTogglePin(COLOR color)
@@ -146,11 +146,11 @@ void HandleExtTempChannel()
 	    float Voltage=(float)(AdcData[0])*3.3/4096;
 	    uint32_t Temperature=(uint32_t)(101-50*Voltage);
 	    uint8_t buffer[10];
-	    sprintf(buffer, "%d", (uint16_t)Temperature);
+	    sprintf((char*)buffer, "%d", (uint16_t)Temperature);
 	      //I have used 'sprintf' because it's the fastest way...
 	      //...to implement conversion of uint32_t to uint8_t
 	    HAL_UART_Transmit(&huart3, (uint8_t *)"The current Temperature = ", 26, 10);
-	    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), 10);
+	    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen((char*)buffer), 10);
 	    HAL_UART_Transmit(&huart3, (uint8_t *)" C", 2, 10);
 	    HAL_UART_Transmit(&huart3, (uint8_t *)"\r\n", 2, 10);
 	    AdcDmaFlag=0;
