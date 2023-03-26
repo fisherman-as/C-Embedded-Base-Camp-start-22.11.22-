@@ -16,7 +16,7 @@ BUTTONCOUNTER PressCounter={0};
 BUTTONCOUNTER* pPressCounter=&PressCounter;
 BUTTON Button=None;
 
-void StopChannels(TIM_HandleTypeDef timer) //THE FUNCTION DOESN'T WORK
+void StopChannels(TIM_HandleTypeDef timer)
 {
 	HAL_TIM_PWM_Stop(&timer, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Stop(&timer, TIM_CHANNEL_2);

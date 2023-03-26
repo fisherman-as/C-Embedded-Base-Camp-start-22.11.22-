@@ -38,6 +38,6 @@ void SW4Handler(TIM_HandleTypeDef, PWM*);//this button increases the duty cycle
 void SW5Handler(TIM_HandleTypeDef, PWM*);//this button decreases the duty cycle
 void Tim4ReInit(TIM_HandleTypeDef, PWM*);//restart of the PWM with updated settings
 void ButtonsHandler(TIM_HandleTypeDef);  //the main function, it monitors...
-                                         //...PWM settings struct and restarts PWM
+                                         //...PWM settings structure and restarts PWM
 
 #endif /* INC_PWM_H_ */
