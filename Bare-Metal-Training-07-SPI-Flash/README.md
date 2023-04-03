@@ -58,7 +58,7 @@ Life is what happens when you're busy making other plans. -John Lennon\n
 So, if you have read this text to this point, you can view my thoughts here.\n
 I think we'll prevail. Hope it happens until 13.08.2023. However the more real date is \n
 the summer of 2025's. If I'm not in the army yet, you can write me a mail:).\n
-I like this courses, they gave me some practice and experience.\n";
+I like these courses, they gave me some practice and experience.\n";
 
 
 
